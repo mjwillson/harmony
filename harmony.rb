@@ -1,0 +1,15 @@
+require 'harmony/note'
+require 'harmony/note_class'
+require 'harmony/interval'
+require 'harmony/interval_class'
+require 'harmony/vector'
+require 'harmony/vector/note'
+require 'harmony/vector/interval'
+require 'harmony/comparison_coercions'
+require 'harmony/chord'
+require 'harmony/chord_modulo_octaves'
+require 'harmony/chord_modulo_transposition'
+require 'harmony/chord_notes_modulo_octaves'
+require 'harmony/chord_notes_modulo_octaves_modulo_transposition'
+
+include Harmony
