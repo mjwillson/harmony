@@ -6,7 +6,7 @@ module Harmony
       @midi_number = case arg
       when Fixnum then arg
       when /^([A-Z][#b]?)(-?\d+)$/
-        PitchClass::NOTES_FROM_NAME[$1] + 12*$2.to_i
+        PitchClass[$1] + 12*$2.to_i
       else
         raise ArgumentError
       end

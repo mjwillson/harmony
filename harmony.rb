@@ -1,3 +1,4 @@
+require 'harmony/dictionary'
 require 'harmony/pitch'
 require 'harmony/pitch_class'
 require 'harmony/interval'
