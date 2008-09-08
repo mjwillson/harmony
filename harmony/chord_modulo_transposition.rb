@@ -37,7 +37,7 @@ module Harmony
       compare(:subset?, other) do
         max_diff = other.interval_set.max - @interval_set.max
         # are there any offsets which we can slide our interval set by so that it lines up with a subset of the other's interval set?
-        max_diff >= 0 && (Interval.new(0)..max_diff).any? {|i| @interval_set.map {|j| j+i}.subset?(other.interval_set)}
+        max_diff >= 0 && (0..max_diff).any? {|i| @interval_set.dup.map! {|j| j+i}.subset?(other.interval_set)}
       end
     end
     
@@ -103,7 +103,7 @@ module Harmony
       JAZZ_CHORD_LOOKUP[self]
     end
     
-    SCALE_TYPES = {
+    MODE_NAMES = {
       # 12-note
       'chromatic' => new([0,1,2,3,4,5,6,7,8,9,10,11]),
 
@@ -120,9 +120,11 @@ module Harmony
       'locrian (VII) mode' => new([0,1,3,5,6,8,10]),
 
       '(harmonic) minor' => new([0,2,3,5,7,8,11]),
+
+      'minor with major third' => new([0,2,4,5,7,8,11]),
       
       'melodic minor ascending' => new([0,2,3,5,7,9,11]),
-      'melodic minor descending' => new([0,2,3,5,7,8,10]),
+      'melodic minor descending' => new([0,2,3,5,7,8,10]), # this is the same as the aeolian mode of the major scale
       'seven-note blues' => new([0,2,3,5,6,9,10]), # http://en.wikipedia.org/wiki/Blues_scale
 
       # 6-note
@@ -134,8 +136,78 @@ module Harmony
       # 5-note
       'major pentatonic' => new([0,2,4,7,9]),
       'minor pentatonic' => new([0,3,5,7,10]),
+      
+      # 3-note
+      'major triad' => new([0,4,7]),
+      'major triad first inversion' => new([0,3,8]),
+      'major triad second inversion' => new([0,5,9]),
+
+      'minor triad' => new([0,3,7]),
+      'minor triad first inversion' => new([0,4,9]),
+      'minor triad second inversion' => new([0,5,8]),
+      
+      'diminished triad' => new([0,3,6]),
+      'diminished triad first inversion' => new([0,3,9]),
+      'diminished triad second inversion' => new([0,6,9])
+
+      # lots more i've ommitted
     }
+    MODE_NAME_LOOKUP = MODE_NAMES.invert
     
+    def mode_name
+      MODE_NAME_LOOKUP[self]
+    end
+    
+    def scale_type
+      notes_modulo_octaves.scale_type
+    end
+
+    INTERVALS = {
+      'Semitone' => new([0,1]),
+      'Minor 2nd' => new([0,1]),
+
+      'Tone' => new([0,2]),
+      'Whole tone' => new([0,2]),
+      'Major 2nd' => new([0,2]),
+
+      'Augmented 2nd' => new([0,3]),
+      'Minor 3rd' => new([0,3]),
+
+      'Major 3rd' => new([0,4]),
+
+      'Perfect 4th' => new([0,5]),
+
+      'Tritone' => new([0,6]),
+      'Augmented 4th' => new([0,6]),
+      'Diminished 5th' => new([0,6]),
+
+      'Perfect 5th' => new([0,7]),
+ 
+      'Augmented 5th' => new([0,8]),
+      'Minor 6th' => new([0,8]),
+
+      'Major 6th' => new([0,9]),
+
+      'Diminished 7th' => new([0,10]),
+
+      'Major 7th' => new([0,11]),
+      
+      'Octave' => new([0,12])
+    }
+    INTERVAL_LOOKUP = INTERVALS.invert
+
+    def interval_name
+      INTERVAL_LOOKUP[self]
+    end
+
+    def self.from_interval(n)
+      new([0,n.to_i])
+    end
+
+    def to_interval
+      Interval.new(@interval_set.max) if @interval_set.size == 2
+    end
+
     
     def fix(start=0)
       Chord.new(@interval_set.map {|n| n+start.to_i})
@@ -157,7 +229,7 @@ module Harmony
     
     # this will give you all the modes of the corresponding scale. how many you get depends how many notes there are in the scale and what symmetries are present in it.
     def modes
-      result = Set.new; mode = self
+      result = []; mode = self
       while true
         result << mode
         mode = mode.next_mode
