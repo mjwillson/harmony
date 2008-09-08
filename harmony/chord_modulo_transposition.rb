@@ -1,16 +1,16 @@
 module Harmony
-  # conceptually, a set of notes, modulo a transposition of the whole chord by some number of semitones (into a different key)
-  # represented as: a set of intervals above the bottom note 0
+  # conceptually, a set of pitches, modulo a transposition of the whole chord by some number of semitones (into a different key)
+  # represented as: a set of intervals above the bottom pitch 0
   # corresponds to a 'shape of chord' - eg maj7, sus2 etc
   # or, a 'mode' of a scale, eg 'the Dorian mode of the major scale' - a scale with a particular note of the scale fixed as the starting note
   class Chord::ModuloTransposition
-    def initialize(notes)
-      notes = notes.map {|n| n.to_i}
-      notes = Set.new(notes) unless notes.is_a?(Set)
+    def initialize(pitches)
+      pitches = pitches.map {|n| n.to_i}
+      pitches = Set.new(pitches) unless pitches.is_a?(Set)
 
       # we transform to a uniquely-determined representative for the equivalence class:
-      min = notes.min
-      @interval_set = notes.map! {|note| note - min}
+      min = pitches.min
+      @interval_set = pitches.map! {|pitch| pitch - min}
     end
 
     attr_reader :interval_set
@@ -18,8 +18,8 @@ module Harmony
     include ComparisonCoercions
     include ComparisonCoercions::ComparesModuloTransposition
 
-    def notes_modulo_octaves
-      Chord::NotesModuloOctaves::ModuloTransposition.new(@interval_set)
+    def pitches_modulo_octaves
+      Chord::PitchesModuloOctaves::ModuloTransposition.new(@interval_set)
     end
 
     def ==(other)
@@ -27,7 +27,7 @@ module Harmony
     end
 
     def hash
-      @interval_set.inject(0) {|h, note| h ^ note} # Set#hash is actually a bit crap
+      @interval_set.inject(0) {|h, pitch| h ^ pitch} # Set#hash is actually a bit crap
     end
     def eql?(other)
       super || (other.is_a?(Chord::ModuloTransposition) && @interval_set == other.interval_set)
@@ -159,7 +159,7 @@ module Harmony
     end
     
     def scale_type
-      notes_modulo_octaves.scale_type
+      pitches_modulo_octaves.scale_type
     end
 
     INTERVALS = {
@@ -227,7 +227,7 @@ module Harmony
     end
     alias :next_invertion :next_mode
     
-    # this will give you all the modes of the corresponding scale. how many you get depends how many notes there are in the scale and what symmetries are present in it.
+    # this will give you all the modes of the corresponding scale. how many you get depends how many pitches there are in the scale and what symmetries are present in it.
     def modes
       result = []; mode = self
       while true

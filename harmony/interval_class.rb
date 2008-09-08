@@ -34,7 +34,7 @@ module Harmony
         self.class.new(@semitones + n)
       when Interval, IntervalClass
         self.class.new(@semitones + n.semitones)
-      when NoteClass
+      when PitchClass
         other + self
       else
         raise ArgumentError.new("Bad argument to IntervalClass#+")
@@ -48,7 +48,7 @@ module Harmony
       when Interval, IntervalClass
         self.class.new(@semitones - n.semitones)
       else
-        raise ArgumentError.new("Bad argument to NoteClass#-")
+        raise ArgumentError.new("Bad argument to PitchClass#-")
       end
     end
 

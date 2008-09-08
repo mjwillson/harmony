@@ -1,11 +1,11 @@
 module Harmony
-  class Constraint::BassNote < Constraint
-    def initialize(note)
-      @note == note
+  class Constraint::BassPitch < Constraint
+    def initialize(pitch)
+      @pitch == pitch
     end
 
     def match(chord)
-      chord.min == @note
+      chord.min == @pitch
     end
   end
 end

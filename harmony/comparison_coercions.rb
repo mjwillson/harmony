@@ -3,23 +3,23 @@ module Harmony
     
     #  Embeddings between different layers of equivalence classes. This commutes:
     #
-    #       Chord::ModuloTransposition                       Chord::NotesModuloOctaves::ModuloTransposition
+    #       Chord::ModuloTransposition                       Chord::PitchesModuloOctaves::ModuloTransposition
     #    Chord compared modulo all transpositions         Chord compared modulo all transpositions
-    #    Note offsets compared strictly --------------->  Notes compared modulo octave transpositions  
+    #    Pitch offsets compared strictly --------------->  Pitches compared modulo octave transpositions  
     #                 ^                                                        ^
     #                 |                                                        |
-    #       Chord::ModuloOctaves                              'Chord::NotesModuloOctaves::ModuloOctaves'
+    #       Chord::ModuloOctaves                              'Chord::PitchesModuloOctaves::ModuloOctaves'
     #    Chord compared modulo octave transpositions                          ^   [is isomorphic to the below, so
-    #    Note offsets compared strictly                                       |    not actually implemented separately]
+    #    Pitch offsets compared strictly                                       |    not actually implemented separately]
     #                ^                                                        v
-    #       Chord    |                                        Chord::NotesModuloOctaves        
+    #       Chord    |                                        Chord::PitchesModuloOctaves        
     #    Chord compared strictly        --------------->    Chord compared strictly
-    #    Note offsets compared strictly                     Notes compared modulo octave transpositions
+    #    Pitch offsets compared strictly                     Pitches compared modulo octave transpositions
     #
     # (guess who likes category theory)
     
-    def notes_modulo_octaves
-      raise ArgumentError.new("Couldn't coerce #{self.class} to have notes comparable modulo octaves")
+    def pitches_modulo_octaves
+      raise ArgumentError.new("Couldn't coerce #{self.class} to have pitches comparable modulo octaves")
     end
 
     def modulo_octaves
@@ -30,8 +30,8 @@ module Harmony
       raise ArgumentError.new("Couldn't coerce #{self.class} to be comparable modulo transposition")
     end
 
-    module ComparesNotesModuloOctaves
-      def notes_modulo_octaves
+    module ComparesPitchesModuloOctaves
+      def pitches_modulo_octaves
         self
       end
       
@@ -77,8 +77,8 @@ module Harmony
 
       a, b = self, other
       
-      b = b.notes_modulo_octaves if a.is_a?(ComparesNotesModuloOctaves) && !b.is_a?(ComparesNotesModuloOctaves)
-      a = a.notes_modulo_octaves if b.is_a?(ComparesNotesModuloOctaves) && !a.is_a?(ComparesNotesModuloOctaves)
+      b = b.pitches_modulo_octaves if a.is_a?(ComparesPitchesModuloOctaves) && !b.is_a?(ComparesPitchesModuloOctaves)
+      a = a.pitches_modulo_octaves if b.is_a?(ComparesPitchesModuloOctaves) && !a.is_a?(ComparesPitchesModuloOctaves)
 
       b = b.modulo_octaves if a.is_a?(ComparesModuloOctaves) && !b.is_a?(ComparesModuloOctaves)
       a = a.modulo_octaves if b.is_a?(ComparesModuloOctaves) && !a.is_a?(ComparesModuloOctaves)

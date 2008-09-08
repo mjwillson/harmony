@@ -1,16 +1,16 @@
 module Harmony
-  # conceptually, a set of notes, modulo a transposition of the whole chord by some number of octaves
-  # represented as: a set of intervals above the bottom note 0
+  # conceptually, a set of pitches, modulo a transposition of the whole chord by some number of octaves
+  # represented as: a set of intervals above the bottom pitch 0
   # corresponds to something like, eg, Gmaj7 chord pattern (regardless of which octave's G it starts on)
   # or, eg, C minor scale (regardless of which octave)
   class Chord::ModuloOctaves
-    def initialize(notes)
-      notes = notes.map {|n| n.to_i}
-      notes = Set.new(notes) unless notes.is_a?(Set)
+    def initialize(pitches)
+      pitches = pitches.map {|n| n.to_i}
+      pitches = Set.new(pitches) unless pitches.is_a?(Set)
 
       # we transform to a uniquely-determined representative for the equivalence class:
-      start_of_octave_of_min_note = notes.min / 12 * 12 
-      @interval_set = notes.map! {|note| note - start_of_octave_of_min_note}
+      start_of_octave_of_min_pitch = pitches.min / 12 * 12 
+      @interval_set = pitches.map! {|pitch| pitch - start_of_octave_of_min_pitch}
     end
 
     attr_reader :interval_set
@@ -18,8 +18,8 @@ module Harmony
     include ComparisonCoercions
     include ComparisonCoercions::ComparesModuloOctaves
 
-    def notes_modulo_octaves
-      Chord::NotesModuloOctaves.new(@interval_set)
+    def pitches_modulo_octaves
+      Chord::PitchesModuloOctaves.new(@interval_set)
     end
     
     def modulo_transposition
@@ -31,7 +31,7 @@ module Harmony
     end
 
     def hash
-      @interval_set.inject(0) {|h, note| h ^ note} # Set#hash is actually a bit crap
+      @interval_set.inject(0) {|h, pitch| h ^ pitch} # Set#hash is actually a bit crap
     end
     def eql?(other)
       super || (other.is_a?(Chord::ModuloOctaves) && @interval_set == other.interval_set)
@@ -63,7 +63,7 @@ module Harmony
     
     def jazz_chord
       jct = modulo_transposition.jazz_chord_type
-      NoteClass[@interval_set.min].to_s + jct if jct
+      PitchClass[@interval_set.min].to_s + jct if jct
     end
   end
 end

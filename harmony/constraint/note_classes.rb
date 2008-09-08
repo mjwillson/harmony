@@ -1,11 +1,11 @@
 module Harmony
-  class Constraint::NoteClasses < Constraint
-    def initialize(notes)
-      @notes == notes
+  class Constraint::PitchClasses < Constraint
+    def initialize(pitches)
+      @pitches == pitches
     end
 
     def match(chord)
-      @notes.all? {|note| chord.include?(note)}
+      @pitches.all? {|pitch| chord.include?(pitch)}
     end
   end
 end

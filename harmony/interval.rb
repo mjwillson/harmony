@@ -98,7 +98,7 @@ module Harmony
   
     def +(other)
       case other
-      when NoteClass, Note
+      when PitchClass, Pitch
         other + self
       when Fixnum
         Interval.new(@semitones + other)
@@ -111,7 +111,7 @@ module Harmony
 
     def -(other)
       case other
-      when NoteClass, Note
+      when PitchClass, Pitch
         other - self
       when Fixnum
         Interval.new(@semitones - other)
@@ -140,7 +140,7 @@ module Harmony
     end
     
     def unfix
-      NoteClass.new(semitones_beyond_octave)
+      PitchClass.new(semitones_beyond_octave)
     end
     alias_method :interval_class, :unfix
     alias_method :modulo_octaves, :unfix

@@ -1,75 +1,75 @@
 require 'set'
 module Harmony
-  # A set of notes / combination of pitches
+  # A set of pitches / combination of pitches
   class Chord
-    attr_reader :notes
-    def initialize(notes)
-      notes = notes.map {|n| n.to_i}
-      notes = Set.new(notes) unless notes.is_a?(Set)
-      @notes = notes
+    attr_reader :pitches
+    def initialize(pitches)
+      pitches = pitches.map {|n| n.to_i}
+      pitches = Set.new(pitches) unless pitches.is_a?(Set)
+      @pitches = pitches
     end
 
     def map_add(interval)
-      Chord.new(@notes.map {|x| x + interval.to_i})
+      Chord.new(@pitches.map {|x| x + interval.to_i})
     end
     alias_method :transpose, :map_add
 
     def max
-      Note[@notes.max]
+      Pitch[@pitches.max]
     end
     
     def min
-      Note[@notes.min]
+      Pitch[@pitches.min]
     end
     
     def range
-      Interval[@notes.max - @notes.min]
+      Interval[@pitches.max - @pitches.min]
     end
     
     include Enumerable
     def each
-      @notes.each {|n| yield Note[n]}
+      @pitches.each {|n| yield Pitch[n]}
     end
 
     include ComparisonCoercions
 
     def modulo_octaves
-      Chord::ModuloOctaves.new(@notes)
+      Chord::ModuloOctaves.new(@pitches)
     end
     
     def modulo_transposition
-      Chord::ModuloTransposition.new(@notes)
+      Chord::ModuloTransposition.new(@pitches)
     end
     
-    def notes_modulo_octaves
-      Chord::NotesModuloOctaves.new(@notes)
+    def pitches_modulo_octaves
+      Chord::PitchesModuloOctaves.new(@pitches)
     end
     
     def ==(other)
-      compare(:==, other) {@notes == other.notes}
+      compare(:==, other) {@pitches == other.pitches}
     end
 
     def hash
-      @notes.inject(0) {|h, note| h ^ note} # Set#hash is actually a bit crap
+      @pitches.inject(0) {|h, pitch| h ^ pitch} # Set#hash is actually a bit crap
     end
     def eql?(other)
-      super || (other.is_a?(Chord) && @notes == other.notes)
+      super || (other.is_a?(Chord) && @pitches == other.pitches)
     end
   
     def subset?(other)
-      compare(:subset?, other) {@notes.subset?(other.notes)}
+      compare(:subset?, other) {@pitches.subset?(other.pitches)}
     end
     
     def &(other)
-      compare(:&, other) {Chord.new(@notes & other.notes)}
+      compare(:&, other) {Chord.new(@pitches & other.pitches)}
     end
 
     def |(other)
-      compare(:|, other) {Chord.new(@notes | other.notes)}
+      compare(:|, other) {Chord.new(@pitches | other.pitches)}
     end
     
     def empty?
-      @notes.empty?
+      @pitches.empty?
     end
     
     def inspect

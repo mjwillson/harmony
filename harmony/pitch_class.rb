@@ -1,12 +1,14 @@
 module Harmony
-  # a note modulo octave shifts
-  class NoteClass
+  # A pitch modulo octave shifts.
+  # http://en.wikipedia.org/wiki/Pitch_class
+  # Currently we limit to pitch multiples of a Semitone
+  class PitchClass
     def self.[](s); new(s); end
   
     def initialize(arg)
       @midi_number = case arg
       when Fixnum then arg % 12
-      when Note then arg.midi_number % 12
+      when Pitch then arg.midi_number % 12
       when /^([A-G][#b]?)/i
         NOTES_FROM_NAME[$1]
       else
@@ -16,9 +18,9 @@ module Harmony
 
     def ==(other)
       case other
-      when Note
+      when Pitch
         (other.midi_number % 12) == @midi_number
-      when NoteClass
+      when PitchClass
         other.midi_number == @midi_number
       else
         false
@@ -37,10 +39,10 @@ module Harmony
         self.class.new(@midi_number + n)
       when Interval, IntervalClass
         self.class.new(@midi_number + n.semitones)
-      when NoteClass
-        raise ArgumentError.new("Adding two NoteClasss is meaningless")
+      when PitchClass
+        raise ArgumentError.new("Adding two PitchClasss is meaningless")
       else
-        raise ArgumentError.new("Bad argument to NoteClass#+")
+        raise ArgumentError.new("Bad argument to PitchClass#+")
       end
     end
   
@@ -50,10 +52,10 @@ module Harmony
         self.class.new(@midi_number - n)
       when Interval, IntervalClass
         self.class.new(@midi_number - n.semitones)
-      when NoteClass, Note
-        raise ArgumentError.new("An interval involving a non-fixed NoteClass is ill-defined - fix the NoteClass to an octave first")
+      when PitchClass, Pitch
+        raise ArgumentError.new("An interval involving a non-fixed PitchClass is ill-defined - fix the PitchClass to an octave first")
       else
-        raise ArgumentError.new("Bad argument to NoteClass#-")
+        raise ArgumentError.new("Bad argument to PitchClass#-")
       end
     end
   
@@ -66,10 +68,10 @@ module Harmony
     end
 
     def fix(octave=5)
-      Note.new(octave*12 + @midi_number)
+      Pitch.new(octave*12 + @midi_number)
     end
     alias_method :representative, :fix
-    alias_method :note, :fix
+    alias_method :pitch, :fix
   
     def inspect
       "#{self.class}['#{self}']"
