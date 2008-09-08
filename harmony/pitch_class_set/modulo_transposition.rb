@@ -3,7 +3,7 @@ module Harmony
   # alternatively, a set of pitches-modulo-octave, treated (as a whole) modulo any transposition into another key
   # alternatively, a shape of chord, without regard for which octave any given note of the chord is placed in.
   # alternatively, a type of scale, as in "Major" or "Minor pentatonic", without regard for which note of the scale is seen as the starting note (that would be a 'mode')
-  class Chord::PitchesModuloOctaves::ModuloTransposition
+  class PitchClassSet::ModuloTransposition
     def initialize(arg)
       word = case arg
       when Fixnum then arg
@@ -23,13 +23,13 @@ module Harmony
       @representative
     end
     def eql?(other)
-      super || (other.is_a?(Chord::PitchesModuloOctaves::ModuloTransposition) && other.representative == @representative)
+      super || (other.is_a?(PitchClassSet::ModuloTransposition) && other.representative == @representative)
     end
     
-    include ComparisonCoercions
-    include ComparisonCoercions::ComparesModuloOctaves
-    include ComparisonCoercions::ComparesPitchesModuloOctaves
-    include ComparisonCoercions::ComparesModuloTransposition
+    include SetComparisonCoercions
+    include SetComparisonCoercions::ComparesModuloOctaves
+    include SetComparisonCoercions::ComparesPitchClasses
+    include SetComparisonCoercions::ComparesModuloTransposition
     
     def ==(other)
       compare(:==, other) {@representative == other.representative}
@@ -46,7 +46,7 @@ module Harmony
     end
 
     def ~@
-      Chord::PitchesModuloOctaves::ModuloTransposition.new(~@representative)
+      PitchClassSet::ModuloTransposition.new(~@representative)
     end
     
     def empty?
@@ -56,20 +56,20 @@ module Harmony
     # intersection and union aren't well-defined in this context
     
     def unique_transpositions
-      @words.map {|word| Chord::PitchesModuloOctaves.new(word)}
+      @words.map {|word| PitchClassSet.new(word)}
     end
     
     # this fixes seemingly quite arbitrarily, based on the lexicographic choice of representative,
     # but you can vary the transposition offset to get different variations (not necessarily 12 distinct, as there may be symmetries, eg the whole-tone scale only has 2 distinct transpositions)
     def fix_transposition(offset=nil)
-      result = Chord::PitchesModuloOctaves.new(@representative)
+      result = PitchClassSet.new(@representative)
       result = result.map_add(offset) if offset
       result
     end
     
     # this also fixes seemingly quite arbitrarily, based on the lexicographic choice of representative
     def fix_pitch_octaves
-      result = Chord::ModuloTransposition.new((0..11).select {|n| @representative & (1<<n) != 0})
+      result = PitchSet::ModuloTransposition.new((0..11).select {|n| @representative & (1<<n) != 0})
     end
     alias :fix_starting_pitch :fix_pitch_octaves
     alias :fix_mode :fix_pitch_octaves

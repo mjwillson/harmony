@@ -1,9 +1,9 @@
 module Harmony
-  # conceptually, a set of pitches, modulo a transposition of the whole chord by some number of octaves
+  # conceptually, a set of pitches, modulo a transposition of the whole pitch_set by some number of octaves
   # represented as: a set of intervals above the bottom pitch 0
   # corresponds to something like, eg, Gmaj7 chord pattern (regardless of which octave's G it starts on)
   # or, eg, C minor scale (regardless of which octave)
-  class Chord::ModuloOctaves
+  class PitchSet::ModuloOctaves
     def initialize(pitches)
       pitches = pitches.map {|n| n.to_i}
       pitches = Set.new(pitches) unless pitches.is_a?(Set)
@@ -15,15 +15,15 @@ module Harmony
 
     attr_reader :interval_set
 
-    include ComparisonCoercions
-    include ComparisonCoercions::ComparesModuloOctaves
+    include SetComparisonCoercions
+    include SetComparisonCoercions::ComparesModuloOctaves
 
     def pitches_modulo_octaves
-      Chord::PitchesModuloOctaves.new(@interval_set)
+      PitchClassSet.new(@interval_set)
     end
     
     def modulo_transposition
-      Chord::ModuloTransposition.new(@interval_set)
+      PitchSet::ModuloTransposition.new(@interval_set)
     end
 
     def ==(other)
@@ -34,7 +34,7 @@ module Harmony
       @interval_set.inject(0) {|h, pitch| h ^ pitch} # Set#hash is actually a bit crap
     end
     def eql?(other)
-      super || (other.is_a?(Chord::ModuloOctaves) && @interval_set == other.interval_set)
+      super || (other.is_a?(PitchSet::ModuloOctaves) && @interval_set == other.interval_set)
     end
 
     def subset?(other)
@@ -50,7 +50,7 @@ module Harmony
     end
     
     def fix(octave=0)
-      Chord.new(@interval_set.map {|i| i+octave*12})
+      PitchSet.new(@interval_set.map {|i| i+octave*12})
     end
     
     def inspect
@@ -58,7 +58,7 @@ module Harmony
     end
     
     def to_s
-      "ChordModuloOctaves(#{fix.to_a.join(',')})"
+      "PitchSetModuloOctaves(#{fix.to_a.join(',')})"
     end
     
     def jazz_chord

@@ -1,8 +1,8 @@
 module Harmony
-  # A set of pitches / combination of pitches, with the pitches themselves (as well as the chord as a whole) treated regardless of the octave they're in.
+  # A set of pitches / combination of pitches, with the pitches themselves (as well as the pitch_set as a whole) treated regardless of the octave they're in.
   # Eg, the Dminor chord, regardless of whether it's inverted (A,D,F vs D,F,A) / what octave the notes are in.
   # Effectively a subset of {0, ..., 11}
-  class Chord::PitchesModuloOctaves
+  class PitchClassSet
     attr_reader :word
     def initialize(arg)
       @word = case arg
@@ -15,7 +15,7 @@ module Harmony
 
     def map_add(interval)
       interval = interval.to_i % 12
-      Chord::PitchesModuloOctaves.new((@word << interval) & 4095 | (@word >> (12-interval)))
+      PitchClassSet.new((@word << interval) & 4095 | (@word >> (12-interval)))
     end
     alias_method :transpose, :map_add
 
@@ -24,11 +24,11 @@ module Harmony
       12.times {|n| yield PitchClass[n] if @word & (1<<n) != 0}
     end
 
-    include ComparisonCoercions
-    include ComparisonCoercions::ComparesPitchesModuloOctaves
+    include SetComparisonCoercions
+    include SetComparisonCoercions::ComparesPitchClasses
 
     def modulo_transposition
-      Chord::PitchesModuloOctaves::ModuloTransposition.new(@word)
+      PitchClassSet::ModuloTransposition.new(@word)
     end
     
     def ==(other)
@@ -39,7 +39,7 @@ module Harmony
       @word
     end
     def eql?(other)
-      super || (other.is_a?(Chord::PitchesModuloOctaves) && @word == other.word)
+      super || (other.is_a?(PitchClassSet) && @word == other.word)
     end
   
     def subset?(other)
@@ -47,15 +47,15 @@ module Harmony
     end
     
     def &(other)
-      compare(:&, other) {Chord::PitchesModuloOctaves.new(@word & other.word)}
+      compare(:&, other) {PitchClassSet.new(@word & other.word)}
     end
 
     def |(other)
-      compare(:|, other) {Chord::PitchesModuloOctaves.new(@word | other.word)}
+      compare(:|, other) {PitchClassSet.new(@word | other.word)}
     end
     
     def ~@
-      Chord::PitchesModuloOctaves.new(~@word)
+      PitchClassSet.new(~@word)
     end
     
     def empty?
@@ -67,7 +67,7 @@ module Harmony
     end
     
     def to_s
-      "ChordPitchesModuloOctaves(#{to_a.join(',')})"
+      "PitchClassSet(#{to_a.join(',')})"
     end
   end
 end

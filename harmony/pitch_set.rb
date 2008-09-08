@@ -1,7 +1,7 @@
 require 'set'
 module Harmony
   # A set of pitches / combination of pitches
-  class Chord
+  class PitchSet
     attr_reader :pitches
     def initialize(pitches)
       pitches = pitches.map {|n| n.to_i}
@@ -10,7 +10,7 @@ module Harmony
     end
 
     def map_add(interval)
-      Chord.new(@pitches.map {|x| x + interval.to_i})
+      PitchSet.new(@pitches.map {|x| x + interval.to_i})
     end
     alias_method :transpose, :map_add
 
@@ -31,18 +31,18 @@ module Harmony
       @pitches.each {|n| yield Pitch[n]}
     end
 
-    include ComparisonCoercions
+    include SetComparisonCoercions
 
     def modulo_octaves
-      Chord::ModuloOctaves.new(@pitches)
+      PitchSet::ModuloOctaves.new(@pitches)
     end
     
     def modulo_transposition
-      Chord::ModuloTransposition.new(@pitches)
+      PitchSet::ModuloTransposition.new(@pitches)
     end
     
     def pitches_modulo_octaves
-      Chord::PitchesModuloOctaves.new(@pitches)
+      PitchClassSet.new(@pitches)
     end
     
     def ==(other)
@@ -53,7 +53,7 @@ module Harmony
       @pitches.inject(0) {|h, pitch| h ^ pitch} # Set#hash is actually a bit crap
     end
     def eql?(other)
-      super || (other.is_a?(Chord) && @pitches == other.pitches)
+      super || (other.is_a?(PitchSet) && @pitches == other.pitches)
     end
   
     def subset?(other)
@@ -61,11 +61,11 @@ module Harmony
     end
     
     def &(other)
-      compare(:&, other) {Chord.new(@pitches & other.pitches)}
+      compare(:&, other) {PitchSet.new(@pitches & other.pitches)}
     end
 
     def |(other)
-      compare(:|, other) {Chord.new(@pitches | other.pitches)}
+      compare(:|, other) {PitchSet.new(@pitches | other.pitches)}
     end
     
     def empty?
@@ -77,7 +77,7 @@ module Harmony
     end
     
     def to_s
-      "Chord(#{to_a.join(',')})"
+      "PitchSet(#{to_a.join(',')})"
     end
     
     def jazz_chord

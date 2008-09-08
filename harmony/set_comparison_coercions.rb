@@ -1,19 +1,19 @@
 module Harmony
-  module ComparisonCoercions
+  module SetComparisonCoercions
     
-    #  Embeddings between different layers of equivalence classes. This commutes:
+    #  Embeddings between different layers of equivalence classes of (Pitch | PitchClass) sets. This commutes:
     #
-    #       Chord::ModuloTransposition                       Chord::PitchesModuloOctaves::ModuloTransposition
-    #    Chord compared modulo all transpositions         Chord compared modulo all transpositions
+    #       PitchSet::ModuloTransposition                       PitchClassSet::ModuloTransposition
+    #    PitchSet compared modulo all transpositions         PitchSet compared modulo all transpositions
     #    Pitch offsets compared strictly --------------->  Pitches compared modulo octave transpositions  
-    #                 ^                                                        ^
-    #                 |                                                        |
-    #       Chord::ModuloOctaves                              'Chord::PitchesModuloOctaves::ModuloOctaves'
-    #    Chord compared modulo octave transpositions                          ^   [is isomorphic to the below, so
-    #    Pitch offsets compared strictly                                       |    not actually implemented separately]
-    #                ^                                                        v
-    #       Chord    |                                        Chord::PitchesModuloOctaves        
-    #    Chord compared strictly        --------------->    Chord compared strictly
+    #                  ^                                                       ^
+    #                  |                                                       |
+    #       PitchSet::ModuloOctaves                              PitchClassSet::ModuloOctaves
+    #    PitchSet compared modulo octave transpositions                       ^   [is isomorphic to the below, so
+    #    Pitch offsets compared strictly                                      |    not actually implemented separately]
+    #                 ^                                                       v
+    #       PitchSet  |                                          PitchClassSet        
+    #    PitchSet compared strictly        --------------->    PitchSet compared strictly
     #    Pitch offsets compared strictly                     Pitches compared modulo octave transpositions
     #
     # (guess who likes category theory)
@@ -30,7 +30,7 @@ module Harmony
       raise ArgumentError.new("Couldn't coerce #{self.class} to be comparable modulo transposition")
     end
 
-    module ComparesPitchesModuloOctaves
+    module ComparesPitchClasses
       def pitches_modulo_octaves
         self
       end
@@ -69,7 +69,7 @@ module Harmony
     end
 
     def compare(method, other)
-      if !other.is_a?(ComparisonCoercions)
+      if !other.is_a?(SetComparisonCoercions)
         if method == :== then return false else raise ArgumentError.new("#{self.class} and #{other.class} not compatible for operation #{method}") end
       end
       # we have to pass it a block that calls super so it can call the original comparison method
@@ -77,8 +77,8 @@ module Harmony
 
       a, b = self, other
       
-      b = b.pitches_modulo_octaves if a.is_a?(ComparesPitchesModuloOctaves) && !b.is_a?(ComparesPitchesModuloOctaves)
-      a = a.pitches_modulo_octaves if b.is_a?(ComparesPitchesModuloOctaves) && !a.is_a?(ComparesPitchesModuloOctaves)
+      b = b.pitches_modulo_octaves if a.is_a?(ComparesPitchClasses) && !b.is_a?(ComparesPitchClasses)
+      a = a.pitches_modulo_octaves if b.is_a?(ComparesPitchClasses) && !a.is_a?(ComparesPitchClasses)
 
       b = b.modulo_octaves if a.is_a?(ComparesModuloOctaves) && !b.is_a?(ComparesModuloOctaves)
       a = a.modulo_octaves if b.is_a?(ComparesModuloOctaves) && !a.is_a?(ComparesModuloOctaves)

@@ -1,9 +1,9 @@
 module Harmony
-  # conceptually, a set of pitches, modulo a transposition of the whole chord by some number of semitones (into a different key)
+  # conceptually, a set of pitches, modulo a transposition of the whole pitch_set by some number of semitones (into a different key)
   # represented as: a set of intervals above the bottom pitch 0
   # corresponds to a 'shape of chord' - eg maj7, sus2 etc
   # or, a 'mode' of a scale, eg 'the Dorian mode of the major scale' - a scale with a particular note of the scale fixed as the starting note
-  class Chord::ModuloTransposition
+  class PitchSet::ModuloTransposition
     def initialize(pitches)
       pitches = pitches.map {|n| n.to_i}
       pitches = Set.new(pitches) unless pitches.is_a?(Set)
@@ -15,11 +15,11 @@ module Harmony
 
     attr_reader :interval_set
 
-    include ComparisonCoercions
-    include ComparisonCoercions::ComparesModuloTransposition
+    include SetComparisonCoercions
+    include SetComparisonCoercions::ComparesModuloTransposition
 
     def pitches_modulo_octaves
-      Chord::PitchesModuloOctaves::ModuloTransposition.new(@interval_set)
+      PitchClassSet::ModuloTransposition.new(@interval_set)
     end
 
     def ==(other)
@@ -30,7 +30,7 @@ module Harmony
       @interval_set.inject(0) {|h, pitch| h ^ pitch} # Set#hash is actually a bit crap
     end
     def eql?(other)
-      super || (other.is_a?(Chord::ModuloTransposition) && @interval_set == other.interval_set)
+      super || (other.is_a?(PitchSet::ModuloTransposition) && @interval_set == other.interval_set)
     end
 
     def subset?(other)
@@ -210,7 +210,7 @@ module Harmony
 
     
     def fix(start=0)
-      Chord.new(@interval_set.map {|n| n+start.to_i})
+      PitchSet.new(@interval_set.map {|n| n+start.to_i})
     end
     
     def inspect
@@ -223,7 +223,7 @@ module Harmony
       interval_set = @interval_set.dup
       octave_above_max = (interval_set.max / 12 + 1) * 12
       interval_set.delete(0); interval_set.add(octave_above_max)
-      Chord::ModuloTransposition.new(interval_set)
+      PitchSet::ModuloTransposition.new(interval_set)
     end
     alias :next_invertion :next_mode
     
