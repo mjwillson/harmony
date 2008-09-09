@@ -109,7 +109,13 @@ module Harmony
       # 5-note
       new([0,2,4,7,9]) => ['Major pentatonic scale', 'Major pentatonic'],
       new([0,3,5,7,10]) => ['Minor pentatonic scale', 'Minor pentatonic']
+    
+    name_objects_in_namespace "Key",
+      new([0,2,4,5,7,9,11]) => ['Major key', 'Major'],
+      new([0,2,3,5,7,8,11]) => ['Minor key', 'Minor'],
+      new([0,2,3,5,7,8,9,10,11]) => ['Minor key with ascending and descending melodic notes', 'Minor key with melodic notes', 'Minor key with variations']
       
+    
     name_objects_in_namespace "Triad",
       new([0,4,7]) => ['Major triad', 'Major'],
       new([0,3,7]) => ['Minor triad', 'Minor'],

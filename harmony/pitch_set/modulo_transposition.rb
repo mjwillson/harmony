@@ -161,6 +161,7 @@ module Harmony
       new([0,2,3,4,5,7,9,10,11]) => ['Nine-note blues scale', 'Nine-note blues', 'Nine note blues scale', 'Nine note blues'],
 
       # 7-note
+      # major scale modes
       new([0,2,4,5,7,9,11]) => ['Major scale', 'Major scale', 'Diatonic scale', 'Ionian (I) mode', 'Ionian', 'Ionian mode'],
       new([0,2,3,5,7,9,10]) => ['Dorian (II) mode', 'Dorian', 'Dorian mode'],
       new([0,1,3,5,7,8,10]) => ['Phrygian (III) mode', 'Phrygian', 'Phrygian mode'],
@@ -168,6 +169,8 @@ module Harmony
       new([0,2,4,5,7,9,10]) => ['Mixolydian (V) mode', 'Mixolydian', 'Mixolydian mode'],
       new([0,2,3,5,7,8,10]) => ['Natural minor scale', 'Melodic minor descending scale', 'Melodic minor scale descending', 'Descending melodic minor scale', 'Descending melodic minor', 'Aeolian (VI) mode', 'Aeolian', 'Aeolian mode'],
       new([0,1,3,5,6,8,10]) => ['Locrian (VII) mode', 'Locrian', 'Locrian mode', 'Half diminished scale', 'Half-diminished scale'],
+
+      # TODO minor scale modes - eg gypsy scale
 
       new([0,2,3,5,7,8,11]) => ['Minor scale', 'Minor', 'Harmonic minor scale', 'Harmonic minor'],
       new([0,2,4,5,7,8,11]) => ['Minor scale with major third', 'Minor major scale'],
