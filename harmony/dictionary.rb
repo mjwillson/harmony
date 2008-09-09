@@ -62,6 +62,32 @@ module Harmony
     def find_name_for(object)
       find_names_for(object).first
     end
+    
+    SUBS = {
+      'first' => '1st',
+      'second' => '2nd',
+      'third' => '3rd',
+      'fourth' => '4th',
+      'fifth' => '5th',
+      'sixth' => '6th',
+      'seventh' => '7th',
+      'eighth' => '8th',
+      'ninth' => '9th',
+      'tenth' => '10th',
+      'eleventh' => '11th',
+      'twelfth' => '12th',
+      'thirteenth' => '13th',
+      'sharp' => '#',
+      "\342\231\257" => '#',
+      'flat' => 'b',
+      "\342\231\255" => 'b'
+    }
+    
+    def normalize(string)
+      string = string.to_s.downcase
+      SUBS.each {|k,v| string.gsub!(k,v)}
+      string
+    end
   end
 
   @dictionary = Dictionary.new
