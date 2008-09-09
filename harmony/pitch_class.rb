@@ -82,6 +82,10 @@ module Harmony
     
     include DictionaryLookup
     
+    SHARP =   "\342\231\257"
+    NATURAL = "\342\231\256"
+    FLAT =    "\342\231\255"
+    
     name_objects_in_namespace "English note letters for the diatonic C-major scale",
       new(0) =>  ["C","C\342\231\256","C \342\231\256","Cnatural","C natural"],
       new(2) =>  ["D","D\342\231\256","D \342\231\256","Dnatural","D natural"],

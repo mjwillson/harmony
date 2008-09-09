@@ -63,7 +63,7 @@ module Harmony
     
     def jazz_chord
       jct = modulo_transposition.jazz_chord_type
-      PitchClass[@interval_set.min].to_s + jct if jct
+      PitchClass.new(@interval_set.min).to_s + jct if jct
     end
   end
 end

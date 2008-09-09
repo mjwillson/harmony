@@ -110,15 +110,15 @@ module Harmony
       name
     end
 
-    def inspect
-      if (name = unique_name)
+    def inspect(shortcut=false)
+      if shortcut && (name = unique_name)
         "Harmony[#{name.inspect}]"
-      elsif (namespace_and_name = namespaced_name)
+      elsif shortcut && (namespace_and_name = namespaced_name)
         "Harmony#{namespaced_name.inspect}"
       elsif (name = name_by_class)
         "#{self.class}[#{name.inspect}]"
       else
-        super
+        super()
       end
     end
     

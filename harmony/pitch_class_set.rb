@@ -21,7 +21,7 @@ module Harmony
 
     include Enumerable
     def each
-      12.times {|n| yield PitchClass[n] if @word & (1<<n) != 0}
+      12.times {|n| yield PitchClass.new(n) if @word & (1<<n) != 0}
     end
 
     include SetComparisonCoercions

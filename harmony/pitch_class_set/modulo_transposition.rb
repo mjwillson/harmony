@@ -82,42 +82,39 @@ module Harmony
     alias :inversions :modes
     
     
-    SCALE_TYPES = {
+    include DictionaryLookup
+    
+    name_objects_in_namespace "Scale",
       # 12-note
-      'chromatic' => new([0,1,2,3,4,5,6,7,8,9,10,11]),
+      new([0,1,2,3,4,5,6,7,8,9,10,11]) => ['Chromatic scale', 'Chromatic'],
 
       # 9-note
-      'nine-note blues' => new([0,2,3,4,5,7,9,10,11]), # http://en.wikipedia.org/wiki/Blues_scale
+      # http://en.wikipedia.org/wiki/Blues_scale
+      new([0,2,3,4,5,7,9,10,11]) => ['Nine-note blues scale', 'Nine-note blues', 'Nine note blues scale', 'Nine note blues'],
 
       # 7-note
-      'major' => new([0,2,4,5,7,9,11]),
-      '(harmonic) minor' => new([0,2,3,5,7,8,11]),
-      'minor with major third' => new([0,2,4,5,7,8,11]),
-      'melodic minor ascending' => new([0,2,3,5,7,9,11]),
-      # 'melodic minor descending' => new([0,2,3,5,7,8,10]), # just a mode of the major scale
-      'seven-note blues' => new([0,2,3,5,6,9,10]), # http://en.wikipedia.org/wiki/Blues_scale
+      new([0,2,4,5,7,9,11]) => ['Major scale', 'Major', 'Diatonic scale', 'Diatonic', 'Natural minor scale', 'Natural minor', 'Melodic minor scale descending', 'Melodic minor descending scale', 'Descending melodic minor scale', 'Melodic minor descending'],
+      new([0,2,3,5,7,8,11]) => ['Minor scale', 'Minor', 'Harmonic minor scale', 'Harmonic minor'],
+      new([0,2,4,5,7,8,11]) => ['Minor scale with major third', 'Minor major scale'],
+      new([0,2,3,5,7,9,11]) => ['Melodic minor ascending scale', 'Melodic minor scale ascending', 'Ascending melodic minor scale', 'Ascending melodic minor', 'Melodic minor ascending'],
+      # http://en.wikipedia.org/wiki/Blues_scale
+      new([0,2,3,5,6,9,10]) => ['Seven-note blues scale', 'Seven-note blues', 'Seven note blues scale', 'Seven note blues'],
 
       # 6-note
-      'whole tone' => new([0,2,4,6,8,10]),
-      'six-note blues' => new([0,3,5,6,7,10]), # http://en.wikipedia.org/wiki/Blues_scale
-      'symmetrical augmented' => new([0,3,4,7,8,11]), # http://en.wikipedia.org/wiki/Hexatonic_scale#Augmented_scale
-      'prometheus' => new([0,2,4,6,9,10]), # http://en.wikipedia.org/wiki/Hexatonic_scale#Prometheus_scale
+      new([0,2,4,6,8,10]) => ['Whole tone scale', 'Whole tone'],
+      new([0,3,5,6,7,10]) => ['Six-note blues scale', 'Six-note blues', 'Six note blues scale', 'Six note blues'], # http://en.wikipedia.org/wiki/Blues_scale
+      new([0,3,4,7,8,11]) => ['Augmented scale', 'Symmetrical augmented scale', 'Augmented', 'Symmetrical augmented'], # http://en.wikipedia.org/wiki/Hexatonic_scale#Augmented_scale
+      new([0,2,4,6,9,10]) => ['Prometheus', 'Prometheus scale'], # http://en.wikipedia.org/wiki/Hexatonic_scale#Prometheus_scale
 
       # 5-note
-      'major pentatonic' => new([0,2,4,7,9]),
-      'minor pentatonic' => new([0,3,5,7,10]),
+      new([0,2,4,7,9]) => ['Major pentatonic scale', 'Major pentatonic'],
+      new([0,3,5,7,10]) => ['Minor pentatonic scale', 'Minor pentatonic']
       
-      # 3-note
-      'major triad' => new([0,4,7]),
-      'minor triad' => new([0,3,7]),
-      'diminished triad' => new([0,3,6]),
+    name_objects_in_namespace "Triad",
+      new([0,4,7]) => ['Major triad', 'Major'],
+      new([0,3,7]) => ['Minor triad', 'Minor'],
+      new([0,3,6]) => ['Diminished triad', 'Diminished']
 
       # lots more i've ommitted
-    }
-    SCALE_TYPE_LOOKUP = SCALE_TYPES.invert
-    
-    def scale_type
-      SCALE_TYPE_LOOKUP[self]
-    end
   end
 end

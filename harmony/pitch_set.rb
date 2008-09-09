@@ -28,7 +28,7 @@ module Harmony
     
     include Enumerable
     def each
-      @pitches.each {|n| yield Pitch[n]}
+      @pitches.sort.each {|n| yield Pitch[n]}
     end
 
     include SetComparisonCoercions
