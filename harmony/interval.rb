@@ -33,22 +33,7 @@ module Harmony
     end
   
     alias_method :eql?, :==
-    
-    TONAL_NAMES = [
-      ['Unison'],
-      ['Semitone', 'Minor 2nd'],
-      ['Tone', 'Whole tone', 'Major 2nd'],
-      ['Augmented 2nd', 'Minor 3rd'],
-      ['Major 3rd'],
-      ['Perfect 4th'],
-      ['Tritone', 'Augmented 4th', 'Diminished 5th'],
-      ['Perfect 5th'], 
-      ['Augmented 5th', 'Minor 6th'],
-      ['Major 6th'],
-      ['Diminished 7th'],
-      ['Major 7th']
-    ]
-  
+      
     def octaves
       @semitones / 12
     end
@@ -67,18 +52,6 @@ module Harmony
   
     def -@
       Interval.new(- @semitones)
-    end
-  
-    def inspect
-      "#{self.class}[#{@semitones}]"
-    end
-  
-    def to_s(use_tonal_name = false)
-      case sgn
-      when 1 then "Up #{abs.name_with_octaves(use_tonal_name)}"
-      when 0 then 'Unison'
-      when -1 then "Down #{abs.name_with_octaves(use_tonal_name)}"
-      end
     end
   
     def name_with_octaves(use_tonal_name = false)
@@ -145,6 +118,63 @@ module Harmony
     alias_method :interval_class, :unfix
     alias_method :modulo_octaves, :unfix
     
-    def self.[](s); new(s); end
+    include DictionaryLookup
+
+    name_objects_in_namespace "Interval",
+      new(0) => 'Unison',
+      new(1) => 'Semitone',
+      new(1) => 'Minor 2nd',
+           
+      new(2) => 'Tone',
+      new(2) => 'Whole tone',
+      new(2) => 'Major 2nd',
+           
+      new(3) => 'Augmented 2nd',
+      new(3) => 'Minor 3rd',
+           
+      new(4) => 'Major 3rd',
+           
+      new(5) => 'Perfect 4th',
+           
+      new(6) => 'Tritone',
+      new(6) => 'Augmented 4th',
+      new(6) => 'Diminished 5th',
+           
+      new(7) => 'Perfect 5th',
+           
+      new(8) => 'Augmented 5th',
+      new(8) => 'Minor 6th',
+           
+      new(9) => 'Major 6th',
+          
+      new(10) => 'Diminished 7th',
+            
+      new(11) => 'Major 7th',
+            
+      new(12) => 'Octave'
+
+    # http://en.wikipedia.org/wiki/Solfege
+    name_objects_in_namespace "English solfege diatonic scale",
+      new(0) => ['Do', 'Doh'],
+      new(2) => ['Re', 'Ray'],
+      new(4) => ['Mi', 'Mee'],
+      new(5) => ['Fa', 'Fah'],
+      new(7) => ['So', 'Sol', 'Soh'],
+      new(9) => ['La', 'Lah'],
+      new(11) => ['Ti', 'Tee']
+
+    name_objects_in_namespace "English solfege ascending chromatic notes",
+      new(1)  => ['Di', 'Dee'],
+      new(3)  => ['Ri', 'Ree'],
+      new(6)  => ['Fi', 'Fee'],
+      new(8)  => ['Si', 'See'],
+      new(10) => ['Li', 'Lee']
+
+    name_objects_in_namespace "English solfege descending chromatic notes",
+      new(1) =>  ['Ra', 'Rah'],
+      new(3) =>  ['Me', 'May'],
+      new(6) =>  ['Se', 'Say'],
+      new(8) =>  ['Le', 'Lay'],
+      new(10) => ['Te', 'Tay']
   end
 end
